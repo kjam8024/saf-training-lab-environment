@@ -11,15 +11,15 @@ jobs:
     name: Gold Image NGINX
     runs-on: ubuntu-20.04
     env:
-      # so that we can use InSpec without manually accepting the license
+       # so that we can use InSpec without manually accepting the license
       CHEF_LICENSE: accept  
-      # path to our profile                   
+       # path to our profile                   
       PROFILE: my_nginx                        
     steps:
       # updating all dependencies is always a good start
       - name: PREP - Update runner              
         run: sudo apt-get update
- 
+
       - name: PREP - Install InSpec executable 
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec -v 5
 
@@ -32,4 +32,14 @@ jobs:
 
       # double-check that we don't have any serious issues in our profile code
       - name: LINT - Run InSpec Check           
-      run: inspec check $PROFILE
+        run: inspec check $PROFILE
+
+      # launch a container as the test target
+      - name: DEPLOY - Run a Docker container from nginx
+        run: docker run -dit --name nginx nginx:latest
+
+      # install dependencies on the container so that hardening will work
+      - name: DEPLOY - Install Python for our nginx container
+        run: |
+          docker exec nginx apt-get update -y
+          docker exec nginx apt-get install -y python3
