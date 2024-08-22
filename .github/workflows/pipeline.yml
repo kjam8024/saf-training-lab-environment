@@ -16,10 +16,11 @@ jobs:
        # path to our profile                   
       PROFILE: my_nginx
 
-      steps:
+steps:
   # updating all dependencies is always a good start
   - name: PREP - Update runner              
     run: sudo apt-get update
+
 name: Demo Security Validation Gold Image Pipeline
 
 # define the triggers for this action
